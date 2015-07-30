@@ -148,25 +148,25 @@ class Kemutter
 		curl_setopt($curl_session, CURLOPT_URL, $url);
 		$curl_response = curl_exec($curl_session);
 		if (!$curl_response) {
-			throw new KemutterException('Kemutter: cURL error', 1);
+			throw new KemutterException('[Kemutter] cURL error', 1);
 		}
 
 		// Decode the result of JSON format
 		$response = json_decode($curl_response, true);
 		if (is_array($response) && array_key_exists('errors', $response)) {
 			// Throw the errors from Twitter API
-			throw new KemutterException('Twitter API: ' . $response['errors'][0]['message'], $response['errors'][0]['code']);
+			throw new KemutterException('[Twitter API] ' . $response['errors'][0]['message'], $response['errors'][0]['code']);
 		}
 
 		if (stripos($url, '.json') !== false) {
 			if (is_null($response)) {
-				throw new KemutterException('Kemutter: Return response of JSON format is empty or broken', 2);
+				throw new KemutterException('[Kemutter] Return response of JSON format is empty or broken', 2);
 			}
 		} else {
 			// Parse the result of string
 			parse_str($curl_response, $response);
 			if (empty($response)) {
-				throw new KemutterException('Kemutter: Return response of string is empty', 3);
+				throw new KemutterException('[Kemutter] Return response of string is empty', 3);
 			}
 		}
 
