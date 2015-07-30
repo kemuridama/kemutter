@@ -151,13 +151,16 @@ class Kemutter
 			throw new KemutterException('Kemutter: cURL error', 1);
 		}
 
+		// Decode the result of JSON format
+		$response = json_decode($curl_response, true);
+		if (is_array($response) && array_key_exists('errors', $response)) {
+			// Throw the errors from Twitter API
+			throw new KemutterException('Twitter API: ' . $response['errors'][0]['message'], $response['errors'][0]['code']);
+		}
+
 		if (stripos($url, '.json') !== false) {
-			// Decode the result of JSON format and fetch the Twitter API errors
-			$response = json_decode($curl_response, true);
 			if (is_null($response)) {
 				throw new KemutterException('Kemutter: Return response of JSON format is empty or broken', 2);
-			} elseif (array_key_exists('errors', $response)) {
-				throw new KemutterException('Twitter API: ' . $response['errors'][0]['message'], $response['errors'][0]['code']);
 			}
 		} else {
 			// Parse the result of string
